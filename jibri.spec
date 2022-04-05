@@ -1,5 +1,5 @@
 %global project                 jitsi
-%global user                    %{name}
+%global jibri_user              %{name}
 %global release_prefix          1000
 
 Name:                           jibri
@@ -131,16 +131,16 @@ touch %{buildroot}%{_rundir}/%{name}/.icewm/settings
 
 # Package files/dirs.
 %{_datadir}/%{name}/
-%dir %attr(0750,root,%{user}) %{_sysconfdir}/%{name}/
-%config(noreplace) %attr(0640,root,%{user}) %{_sysconfdir}/%{name}/*.{preferences,properties,conf,json}
-%config(noreplace) %attr(0640,root,%{user}) %{_sysconfdir}/%{name}/asoundrc
-%config(noreplace) %attr(0750,root,%{user}) %{_sysconfdir}/%{name}/*.sh
-%dir %attr(0755,%{user},%{user}) %{_rundir}/%{name}/
-%dir %attr(0755,%{user},%{user}) %{_rundir}/%{name}/.icewm
-%dir %attr(0755,%{user},%{user}) %{_var}/spool/%{name}/
-%ghost %attr(0644,%{user},%{user}) %{_rundir}/%{name}/%{name}.pid
-%ghost %attr(0644,%{user},%{user}) %{_rundir}/%{name}/.asoundrc
-%ghost %attr(0644,%{user},%{user}) %{_rundir}/%{name}/.icewm/settings
+%dir %attr(0750,root,%{jibri_user}) %{_sysconfdir}/%{name}/
+%config(noreplace) %attr(0640,root,%{jibri_user}) %{_sysconfdir}/%{name}/*.{preferences,properties,conf,json}
+%config(noreplace) %attr(0640,root,%{jibri_user}) %{_sysconfdir}/%{name}/asoundrc
+%config(noreplace) %attr(0750,root,%{jibri_user}) %{_sysconfdir}/%{name}/*.sh
+%dir %attr(0755,%{jibri_user},%{jibri_user}) %{_rundir}/%{name}/
+%dir %attr(0755,%{jibri_user},%{jibri_user}) %{_rundir}/%{name}/.icewm
+%dir %attr(0755,%{jibri_user},%{jibri_user}) %{_var}/spool/%{name}/
+%ghost %attr(0644,%{jibri_user},%{jibri_user}) %{_rundir}/%{name}/%{name}.pid
+%ghost %attr(0644,%{jibri_user},%{jibri_user}) %{_rundir}/%{name}/.asoundrc
+%ghost %attr(0644,%{jibri_user},%{jibri_user}) %{_rundir}/%{name}/.icewm/settings
 
 # System config.
 %{_unitdir}/*.service
