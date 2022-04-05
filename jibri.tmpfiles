@@ -1,0 +1,6 @@
+# create rundir
+d /run/jibri 0755 jibri jibri -
+# ensure correct permissions for all files in config dir
+Z /etc/jibri 0640 root jibri
+z /etc/jibri 0750 root jibri
+z /etc/jibri/finalize_recording.sh 0750 root jibri

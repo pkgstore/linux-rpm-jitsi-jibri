@@ -1,0 +1,91 @@
+## Fedora-specific documentation for Jitsi
+
+This document describes the steps needed to set up Jitsi on Fedora, CentOS or RHEL systems. In general, the package mostly follows the official Debian package. Notable differences are
+
+ - Slightly different file locations
+ - Both *Jicofo* and *Jitsi Videobridge* log to syslog instead of their own
+ - *Jicofo* runs from a service, rather than a init script
+
+### Installation
+
+A full Jitsi server consists of multiple components, that are split into different packages, as they can be run separately on different machines.
+
+A default single-machine installation can be performed by installing the `jitsi` metapackage.
+
+The full stack consists of
+
+ - *Jitsi-meet*, the web interface: `jitsi-meet`
+ - Webserver configuration: `jitsi-meet-nginx` or `jitsi-meet-apache`
+ - Configuration for *Prosody*, for user management: `jitsi-meet-prosody`
+ - *Jicofo*, the Jitsi Conference Focus room manager: `jicofo`
+ - *Jitsi Videobridge*, the video/audio transport: `jitsi-videobridge`
+
+Optional further components are
+
+ - *Jibri*, Jitsi Broadcasting Infrastructure, for recoding and streaming: `jibri`
+ - *Jigasi*, Jitsi Gateway to SIP, to bridge Jitsi rooms to SIP: `jigasi`
+
+Users might also want to run their own STUN server using e.g. `coturn`, instructions for this can be found in README-stun.md
+
+### Configuration
+
+After installation, there are a few additional configuration steps to perform.
+Mostly, that consists of replacing various placeholder variables with their correct values. Placeholders variables are identified by underscores/camelCase `__variableName__`.
+
+In all files, replace `__jitsiFQDN__` with the fully-qualified domain name of your instance and `__<component>Secret__` with a strong random password.
+
+#### Prosody config
+
+Prosody configuration for Jitsi is found in `/etc/prosody/conf.d/jitsi-meet.cfg.lua` .
+
+ - in the config file, replace placeholder variables `__jitsiFQDN__`, `__focusSecret__`, and - if you're planning to run your own STUN server - `__turnSecret__`.
+ - generate certificates for `__jitsiFQDN__` and `auth.__jitsiFQDN__` and add them to your system's trust database:
+
+```
+$ prosodyctl cert generate __jitsiFQDN__
+$ prosodyctl cert generate auth.__jitsiFQDN__
+$ trust anchor /var/lib/prosody/__jitsiFQDN__
+$ trust anchor /var/lib/prosody/auth.__jitsiFQDN__
+```
+ - add users for Jicofo (`focus`) and Jitsi Videobridge (`jvb`)
+```
+$ prosodyctl register focus auth.__jitsiFQDN__ __focusUserSecret__
+$ prosodyctl register jvb auth.__jitsiFQDN__ __jvbUserSecret__
+```
+ - start the prosody service
+
+#### Jitsi Meet
+
+Configuration is located in `/etc/jitsi-meet`. Only `config.js` contains placeholder variables that need to be replaced.
+
+#### Webserver config
+
+Webserver configuration is located in `/etc/nginx/conf.d/jitsi-meet.conf` (for Nginx) and `/etc/httpd/conf.d/jitsi-meet.conf` (for Apache). Additionally you'll need to set up HTTPS for `__jitsiFQDN__`. Edit the configuration, then start/restart the webserver.
+
+#### Jicofo config
+
+Configuration is located in `/etc/jicofo/`. Replace `__jitsiFQDN__`, `__focusSecret__` and `__focusUserSecret__` in `config` and `sip-communicator.properties`.
+
+Start `jicofo.service`
+
+#### Jitsi Videobridge
+
+Configuration is located in `/etc/jitsi-videobridge`. Replace `__jitsiFQDN__` and `__jvbUserSecret__` in `jvb.conf`.
+
+Jitsi-videobridge communicates on port 10000/udp, so it needs to be opened or forwarded if you're behind NAT. The `jitsi-videobridge-firewalld` package provides a `jitsi-videobridge` service definition for firewalld that you can enable to open that port.
+
+Start `jitsi-videobridge.service`. Additional service configuration can be found in `/etc/sysconfig/jitsi-videobridge`
+
+#### Jibri
+
+Configuration is located in `/etc/jibri/config.json`. Replace `__jitsiFQDN__`, `__jibriUserSecret__` and `__recorderUserSecret__`.
+Add users to prosody:
+```
+$ prosodyctl register jibri auth.__jitsiFQDN__ __jibriUserSecret__
+$ prosodyctl register recorder auth.__jitsiFQDN__ __recorderUserSecret__
+```
+
+### Troubleshooting
+
+ - Check the logs. *Jicofo* and *Jitsi Videobridge* log to syslog, prosody by default logs to `/var/log/prosody/*`. The former's logs are a mess, but usually informative. Errors are usually related to a) leftover placeholder variables and b) issues with the certificates.
+ - As the package mostly follows the official Debian package, most help you can find for that applies here too.

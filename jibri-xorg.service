@@ -1,0 +1,16 @@
+[Unit]
+Description=Jibri Xorg Process
+After=network.target
+
+[Service]
+Environment=DISPLAY=:0
+EnvironmentFile=-/etc/sysconfig/jibri
+ExecStart=/usr/bin/Xorg -nocursor -noreset  +extension RANDR +extension RENDER -logfile /var/log/Xorg-jibri.log  -config /etc/jibri/xorg-video-dummy.conf $DISPLAY
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartPreventExitStatus=255
+Type=simple
+
+[Install]
+WantedBy=jibri.service jibri-icewm.service

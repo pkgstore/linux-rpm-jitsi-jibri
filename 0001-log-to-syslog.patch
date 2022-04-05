@@ -1,0 +1,28 @@
+diff -Naur a/lib/logging.properties b/lib/logging.properties
+--- a/lib/logging.properties	2019-08-21 19:10:53.000000000 +0200
++++ b/lib/logging.properties	2021-02-07 19:47:51.898638399 +0100
+@@ -1,4 +1,5 @@
+-handlers = java.util.logging.FileHandler, java.util.logging.ConsoleHandler
++#handlers = java.util.logging.FileHandler, java.util.logging.ConsoleHandler
++handlers = java.util.logging.ConsoleHandler, com.agafua.syslog.SyslogHandler
+ 
+ java.util.logging.FileHandler.level = FINE
+ java.util.logging.FileHandler.pattern   = /var/log/jitsi/jibri/log.%g.txt
+@@ -25,7 +26,16 @@
+ org.jitsi.jibri.selenium.util.BrowserFileHandler.limit = 10000000
+ 
+ java.util.logging.ConsoleHandler.level = FINE
+-java.util.logging.ConsoleHandler.formatter = net.java.sip.communicator.util.ScLogFormatter
++java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
++
++com.agafua.syslog.SyslogHandler.transport = udp
++com.agafua.syslog.SyslogHandler.facility = local0
++com.agafua.syslog.SyslogHandler.port = 514
++com.agafua.syslog.SyslogHandler.hostname = localhost
++com.agafua.syslog.SyslogHandler.formatter = java.util.logging.SimpleFormatter
++com.agafua.syslog.SyslogHandler.escapeNewlines = false
++
++java.util.logging.SimpleFormatter.format = %4$s %2$s %5$s %6$s%
+ 
+ org.jitsi.level = FINE
+ 

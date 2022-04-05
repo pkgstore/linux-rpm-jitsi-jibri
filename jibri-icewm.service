@@ -1,0 +1,19 @@
+[Unit]
+Description=Jibri Window Manager
+Requires=jibri-xorg.service
+After=jibri-xorg.service
+
+[Service]
+User=jibri
+Group=jibri
+Environment=DISPLAY=:0
+EnvironmentFile=-/etc/sysconfig/jibri
+ExecStartPre=/usr/bin/cp /etc/jibri/asoundrc /run/jibri/.asoundrc
+ExecStartPre=/usr/bin/cp /etc/jibri/icewm.preferences /run/jibri/.icewm/settings
+ExecStart=/usr/bin/icewm-session
+Restart=on-failure
+RestartPreventExitStatus=255
+Type=simple
+
+[Install]
+WantedBy=jibri.service

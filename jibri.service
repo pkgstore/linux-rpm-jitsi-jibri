@@ -1,0 +1,29 @@
+[Unit]
+Description=Jibri Process
+Requires=jibri-icewm.service jibri-xorg.service
+After=network.target
+
+[Service]
+User=jibri
+Group=jibri
+EnvironmentFile=-/etc/sysconfig/jibri
+ExecStart=/usr/libexec/jibri start
+ExecStop=/usr/libexec/jibri graceful
+ExecReload=/usr/libexec/jibri graceful
+KillMode=process
+Restart=always
+RestartPreventExitStatus=255
+Type=simple
+WorkingDirectory=~
+
+# Hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target
