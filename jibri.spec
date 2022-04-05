@@ -36,7 +36,7 @@ Requires:                       alsa-utils
 Requires:                       icewm
 Requires:                       xorg-x11-drv-dummy
 Requires:                       curl
-Requires:                       jre-headless
+Requires:                       java-latest-openjdk-headless
 Requires:                       systemd
 %{?sysusers_requires_compat}
 
