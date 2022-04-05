@@ -26,7 +26,7 @@ Patch1:                         0001-log-to-syslog.patch
 BuildArch:                      noarch
 BuildRequires:                  maven
 BuildRequires:                  maven-local
-BuildRequires:                  java-latest-openjdk-devel
+BuildRequires:                  java-1.8.0-openjdk-devel
 BuildRequires:                  systemd-rpm-macros
 
 Requires:                       xdotool
@@ -36,7 +36,7 @@ Requires:                       alsa-utils
 Requires:                       icewm
 Requires:                       xorg-x11-drv-dummy
 Requires:                       curl
-Requires:                       java-latest-openjdk-headless
+Requires:                       java-1.8.0-openjdk-headless
 Requires:                       systemd
 %{?sysusers_requires_compat}
 
